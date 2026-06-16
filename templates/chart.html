@@ -1,0 +1,27 @@
+
+
+
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card p-4">
+            <h4 class="mb-3 text-center">
+                {% if chart_type == 'pie' %}Pie Chart - Spending by Category
+                {% elif chart_type == 'bar' %}Bar Chart - Spending by Category
+                {% elif chart_type == 'trend' %}Monthly Spending Trend
+                {% endif %}
+            </h4>
+            <img src="data:image/png;base64,{{ chart_data }}" class="img-fluid" alt="Chart">
+            <div class="text-center mt-3">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Back to Dashboard</a>
+                <a href="{{ url_for('chart', chart_type='pie') }}" class="btn btn-primary">Pie</a>
+                <a href="{{ url_for('chart', chart_type='bar') }}" class="btn btn-success">Bar</a>
+                <a href="{{ url_for('chart', chart_type='trend') }}" class="btn btn-info">Trend</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

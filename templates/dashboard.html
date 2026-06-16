@@ -1,0 +1,97 @@
+
+
+
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <h2>Dashboard</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card p-3 text-center">
+            <h5>Total Spent</h5>
+            <h2 class="text-primary">€{{ "%.2f"|format(total) }}</h2>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-3 text-center">
+            <h5>Categories</h5>
+            <h2 class="text-success">{{ categories|length }}</h2>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card p-3 text-center">
+            <h5>Monthly Trend</h5>
+            <h2 class="text-info">{{ data|sum|round(2) }}</h2>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card p-3">
+            <h5>Category Breakdown</h5>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Category</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cat in categories %}
+                    <tr>
+                        <td>{{ cat.category }}</td>
+                        <td>€{{ "%.2f"|format(cat.total) }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="2" class="text-center">No expenses yet</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card p-3">
+            <h5>Monthly Spending</h5>
+            <canvas id="trendChart" height="200"></canvas>
+            <div class="mt-2">
+                <a href="{{ url_for('chart', chart_type='pie') }}" class="btn btn-sm btn-primary">Pie Chart</a>
+                <a href="{{ url_for('chart', chart_type='bar') }}" class="btn btn-sm btn-success">Bar Chart</a>
+                <a href="{{ url_for('chart', chart_type='trend') }}" class="btn btn-sm btn-info">Trend Chart</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('trendChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {{ labels|tojson }},
+            datasets: [{
+                label: 'Monthly Spending',
+                data: {{ data|tojson }},
+                borderColor: '#3b82f6',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+</script>
+{% endblock %}
